@@ -436,18 +436,24 @@ app.delete('/tasks/:id', auth, validateObjectId, async (req, res, next) => {
 // Root route - API overview & health check
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'ITUE301 Practical 7: Authentication & Middleware Pipeline API',
+    message: 'ITUE301 Practical 9: In-Memory Caching & Query Optimization API',
     student: 'Aayush Malhotra (24CS051)',
+    cachingEngine: 'node-cache (stdTTL: 60s, Auto Write-Invalidation)',
+    cachingEndpoints: {
+      cacheStats: 'GET /tasks/cache-stats',
+      cacheFlush: 'POST /tasks/cache-flush',
+    },
     authEndpoints: {
       register: 'POST /register',
       login: 'POST /login',
       getProfile: 'GET /me (Protected)',
     },
     taskEndpoints: {
-      getTasks: 'GET /tasks (Protected: Bearer <token>)',
-      createTask: 'POST /tasks (Protected: Bearer <token>)',
-      updateTask: 'PUT /tasks/:id (Protected)',
-      deleteTask: 'DELETE /tasks/:id (Protected)',
+      getTasks: 'GET /tasks (Cached with 60s TTL, Protected)',
+      getTaskById: 'GET /tasks/:id (Single Item Cache, Protected)',
+      createTask: 'POST /tasks (Invalidates Cache, Protected)',
+      updateTask: 'PUT /tasks/:id (Invalidates Cache, Protected)',
+      deleteTask: 'DELETE /tasks/:id (Invalidates Cache, Protected)',
     },
     demoCredentials: {
       email: '24cs051@charusat.edu.in',
@@ -455,6 +461,7 @@ app.get('/', (req, res) => {
     },
   });
 });
+
 
 // 404 Handler for undefined routes
 app.use((req, res) => {
